@@ -209,6 +209,10 @@ add_library(fdb_sqlite STATIC
   sqlite/sqliteLimit.h
   sqlite/sqlite3.amalgamation.c)
 
+add_definitions(
+    -Wfatal-errors
+    )
+
 # Suppress warnings in sqlite since it's third party
 if(NOT WIN32)
   target_compile_definitions(fdb_sqlite PRIVATE $<$<CONFIG:Debug>:NDEBUG>)

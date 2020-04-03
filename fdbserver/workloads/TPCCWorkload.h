@@ -1,9 +1,29 @@
+/*
+ * TPCCWorkload.h
+ *
+ * This source file is part of the FoundationDB open source project
+ *
+ * Copyright 2013-2020 Apple Inc. and the FoundationDB project authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 #ifndef FDBSERVER_TPCCWORKLOAD_H
 #define FDBSERVER_TPCCWORKLOAD_H
-
-
-
 #pragma once
+#include "flow/Arena.h"
+#include "fdbclient/FDBTypes.h"
+#include <boost/preprocessor.hpp>
+#include <iomanip>
 
 namespace TPCCWorkload {
 
@@ -25,7 +45,7 @@ namespace TPCCWorkload {
     ROW_MEMBERS_SEQ(prefix, BOOST_PP_TUPLE_TO_SEQ(tuple))
 
 #define ROW_SERIALIZE_ELEMENT(r, data, elem)                                   \
-    , v1(ROW_ELEMENT_NAME(data, BOOST_PP_TUPLE_ELEM(1, elem)))
+    , ROW_ELEMENT_NAME(data, BOOST_PP_TUPLE_ELEM(1, elem))
 #define ROW_SERIALIZE_ELEMENTS(prefix, seq)                                    \
     BOOST_PP_SEQ_FOR_EACH(ROW_SERIALIZE_ELEMENT, prefix, seq)
 #define ROW_SERIALIZE(prefix, tuple)                                           \
@@ -243,9 +263,9 @@ struct GlobalState
 
     GlobalState()
     {
-        CLoad = g_random->randomInt(0, 256);
+        CLoad = deterministicRandom()->randomInt(0, 256);
         while (true) {
-            CDelta = g_random->randomInt(65, 120);
+            CDelta = deterministicRandom()->randomInt(65, 120);
             if (!(CDelta == 96 || CDelta == 112)) {
                 break;
             }
@@ -254,16 +274,16 @@ struct GlobalState
         if (CDelta > CLoad) {
             CRun = CLoad + CDelta;
         } else {
-            CRun = g_random->coinflip() ? CLoad + CDelta : CLoad - CDelta;
+            CRun = deterministicRandom()->coinflip() ? CLoad + CDelta : CLoad - CDelta;
         }
-        CId = g_random->randomInt(1, 3001);
-        COlIID = g_random->randomInt(1, 100001);
+        CId = deterministicRandom()->randomInt(1, 3001);
+        COlIID = deterministicRandom()->randomInt(1, 100001);
     }
 
     template <class Ar>
     void serialize(Ar& ar)
     {
-        serializer(ar, v1(CLoad), v1(CRun), v1(CDelta), v1(CId), v1(COlIID));
+        serializer(ar, CLoad, CRun, CDelta, CId, COlIID);
     }
 
     StringRef key() const { return LiteralStringRef("GlobalState"); }
