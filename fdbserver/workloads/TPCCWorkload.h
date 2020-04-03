@@ -1,5 +1,8 @@
 #ifndef FDBSERVER_TPCCWORKLOAD_H
 #define FDBSERVER_TPCCWORKLOAD_H
+
+
+
 #pragma once
 
 namespace TPCCWorkload {
@@ -94,7 +97,7 @@ namespace TPCCWorkload {
 #define ROW(Name, prefix, tuple, primary_key, indexes)                         \
     struct Name                                                                \
     {                                                                          \
-        constexpr static flat_buffers::FileIdentifier file_identifier =        \
+        constexpr static FileIdentifier file_identifier =        \
             __COUNTER__;                                                       \
         Arena arena;                                                           \
         ROW_MEMBERS(prefix, tuple)                                             \
@@ -235,7 +238,7 @@ ROW(Stock, s_,
 
 struct GlobalState
 {
-    constexpr static flat_buffers::FileIdentifier file_identifier = 1064821;
+    constexpr static FileIdentifier file_identifier = 1064821;
     int CLoad, CRun, CDelta, CId, COlIID;
 
     GlobalState()

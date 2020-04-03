@@ -162,7 +162,7 @@ struct TPCC : TestWorkload
                     BinaryReader reader(val.get(), IncludeVersion());
                     serializer(reader, v1(self->gState));
                 } else {
-                    Void _uvar = wait(delay(1.0));
+		  /* Void _uvar = */ wait(delay(1.0));
                 }
                 return Void();
             } catch (Error& e) {
@@ -334,7 +334,7 @@ struct TPCC : TestWorkload
                 serializer(w, v1(newOrder));
                 tr.set(newOrder.key(), w.toStringRef());
             }
-            Void _uvar = wait(tr.commit());
+            /* Void _uvar = */ wait(tr.commit());
         } catch (Error& e) {
             return false;
         }
@@ -477,7 +477,7 @@ struct TPCC : TestWorkload
                     kW.toStringRef().withPrefix(LiteralStringRef("History/"));
                 tr.set(key, w.toStringRef());
             }
-            Void _uvar = wait(tr.commit());
+            /* Void _uvar = */ wait(tr.commit());
         } catch (Error& e) {
             return false;
         }
@@ -589,7 +589,7 @@ struct TPCC : TestWorkload
                         serializer(w, v1(customer));
                         tr.set(customer.key(), w.toStringRef());
                     }
-                    Void _uvar = wait(tr.commit());
+                    /* Void _uvar = */ wait(tr.commit());
                 }
             }
         } catch (Error& e) {
@@ -655,7 +655,7 @@ struct TPCC : TestWorkload
                                            int d_id)
     {
         // stagger users
-        Void _uvar = wait(delay(20.0 * g_random->random01()));
+        /* Void _uvar = */ wait(delay(20.0 * g_random->random01()));
         TraceEvent("StartingEmulatedUser")
             .detail("Warehouse", w_id)
             .detail("District", d_id);
@@ -676,7 +676,7 @@ struct TPCC : TestWorkload
                         txnStartTime, self->metrics.stockLevelLatencies,
                         self->metrics.stockLevelResponseTime, "StockLevel");
                 }
-                Void _uvar = wait(delay(2 + g_random->random01() * 10));
+                /* Void _uvar = */ wait(delay(2 + g_random->random01() * 10));
             } else if (type < 8) {
                 tx = delivery(self, cx, w_id);
                 bool committed = wait(tx);
@@ -687,7 +687,7 @@ struct TPCC : TestWorkload
                         self->metrics.deliveryLatencies,
                         self->metrics.deliveryResponseTime, "Delivery");
                 }
-                Void _uvar = wait(delay(2 + g_random->random01() * 10));
+                /* Void _uvar = */ wait(delay(2 + g_random->random01() * 10));
             } else if (type < 12) {
                 tx = orderStatus(self, cx, w_id);
                 bool committed = wait(tx);
@@ -699,7 +699,7 @@ struct TPCC : TestWorkload
                         txnStartTime, self->metrics.orderStatusLatencies,
                         self->metrics.orderStatusResponseTime, "OrderStatus");
                 }
-                Void _uvar = wait(delay(2 + g_random->random01() * 20));
+                /* Void _uvar = */ wait(delay(2 + g_random->random01() * 20));
             } else if (type < 55) {
                 tx = payment(self, cx, w_id);
                 bool committed = wait(tx);
@@ -710,7 +710,7 @@ struct TPCC : TestWorkload
                         self->metrics.paymentLatencies,
                         self->metrics.paymentResponseTime, "Payment");
                 }
-                Void _uvar = wait(delay(3 + g_random->random01() * 24));
+                /* Void _uvar = */ wait(delay(3 + g_random->random01() * 24));
             } else {
                 tx = newOrder(self, cx, w_id);
                 bool committed = wait(tx);
@@ -721,7 +721,7 @@ struct TPCC : TestWorkload
                         self->metrics.newOrderLatencies,
                         self->metrics.newOrderResponseTime, "NewOrder");
                 }
-                Void _uvar = wait(delay(18 + g_random->random01() * 24));
+                /* Void _uvar = */ wait(delay(18 + g_random->random01() * 24));
             }
         }
     }
@@ -748,7 +748,7 @@ struct TPCC : TestWorkload
 
     ACTOR Future<Void> _start(Database cx, TPCC* self)
     {
-        Void _uvar = wait(readGlobalState(self, cx));
+        /* Void _uvar = */ wait(readGlobalState(self, cx));
         self->startTime = g_network->now();
         int startWID = self->clientId * self->warehousesPerClient;
         int endWID = startWID + self->warehousesPerClient;
@@ -762,7 +762,7 @@ struct TPCC : TestWorkload
                             self->testDuration, Void()));
             }
         }
-        Void _uvar = wait(waitForAll(emulatedUsers));
+        /* Void _uvar = */ wait(waitForAll(emulatedUsers));
         return Void();
     }
 

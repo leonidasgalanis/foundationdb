@@ -160,6 +160,7 @@ set(FDBSERVER_SRCS
   workloads/Performance.actor.cpp
   workloads/Ping.actor.cpp
   workloads/PubSubMultiples.actor.cpp
+  workloads/PopulateTPCC.actor.cpp
   workloads/QueuePush.actor.cpp
   workloads/RandomClogging.actor.cpp
   workloads/RandomMoveKeys.actor.cpp
@@ -185,6 +186,7 @@ set(FDBSERVER_SRCS
   workloads/ThreadSafety.actor.cpp
   workloads/Throttling.actor.cpp
   workloads/Throughput.actor.cpp
+  workloads/TPCC.actor.cpp
   workloads/TimeKeeperCorrectness.actor.cpp
   workloads/DifferentClustersSameRV.actor.cpp
   workloads/UnitPerf.actor.cpp

@@ -1,6 +1,6 @@
 #include "flow/actorcompiler.h"
 #include "workloads.actor.h"
-#include "QuietDatabase.actor.h"
+#include "QuietDatabase.h"
 #include "TPCCWorkload.h"
 
 #include <fdbclient/ReadYourWrites.h>
@@ -126,7 +126,7 @@ struct PopulateTPCC : TestWorkload
                 BinaryWriter writer(IncludeVersion());
                 serializer(writer, v1(self->gState));
                 tr.set(self->gState.key(), writer.toStringRef());
-                Void _uvar = wait(tr.commit());
+                /* Void _uvar = */ wait(tr.commit());
                 return Void();
             } catch (Error& e) {
                 wait(tr.onError(e));
@@ -146,7 +146,7 @@ struct PopulateTPCC : TestWorkload
                     BinaryReader reader(val.get(), IncludeVersion());
                     serializer(reader, v1(self->gState));
                 } else {
-                    Void _uvar = wait(delay(1.0));
+                    /* Void _uvar = */ wait(delay(1.0));
                 }
                 return Void();
             } catch (Error& e) {
@@ -179,11 +179,11 @@ struct PopulateTPCC : TestWorkload
                         serializer(w, v1(item));
                         tr.set(item.key(), w.toStringRef(), false);
                     }
-                    Void _uvar = wait(tr.commit());
+                    /* Void _uvar = */ wait(tr.commit());
                     break;
                 } catch (Error& e) {
                     TraceEvent("PopulateItemsHandleError").error(e);
-                    Void _uvar = wait(tr.onError(e));
+                    /* Void _uvar = */ wait(tr.onError(e));
                 }
             }
         }
@@ -268,11 +268,11 @@ struct PopulateTPCC : TestWorkload
                     }
                 }
                 try {
-                    Void _uvar = wait(tr.commit());
+                    /* Void _uvar = */ wait(tr.commit());
                     break;
                 } catch (Error& e) {
                     TraceEvent("PopulateCustomerHandleError").error(e);
-                    Void _uvar = wait(tr.onError(e));
+                    /* Void _uvar = */ wait(tr.onError(e));
                 }
             }
         }
@@ -340,11 +340,11 @@ struct PopulateTPCC : TestWorkload
                     tr.set(o.key(), w.toStringRef(), false);
                 }
                 try {
-                    Void _uvar = wait(tr.commit());
+                    /* Void _uvar = */ wait(tr.commit());
                     break;
                 } catch (Error& e) {
                     TraceEvent("PopulateOrderHandleError").error(e);
-                    Void _uvar = wait(tr.onError(e));
+                    /* Void _uvar = */ wait(tr.onError(e));
                 }
             }
         }
@@ -374,11 +374,11 @@ struct PopulateTPCC : TestWorkload
                 tr.set(no.key(), w.toStringRef(), false);
             }
             try {
-                Void _uvar = wait(tr.commit());
+                /* Void _uvar = */ wait(tr.commit());
                 break;
             } catch (Error& e) {
                 TraceEvent("PopulateNewOrderHandleError").error(e);
-                Void _uvar = wait(tr.onError(e));
+                /* Void _uvar = */ wait(tr.onError(e));
             }
         }
         TraceEvent("PopulateNewOrdersDone")
@@ -415,14 +415,14 @@ struct PopulateTPCC : TestWorkload
                 serializer(w, v1(d));
                 tr.set(d.key(), w.toStringRef(), false);
                 try {
-                    Void _uvar = wait(tr.commit());
-                    Void _uvar = wait(populateCustomers(self, cx, w_id, d_id));
-                    Void _uvar = wait(populateOrders(self, cx, w_id, d_id));
-                    Void _uvar = wait(populateNewOrders(self, cx, w_id, d_id));
+                    /* Void _uvar = */ wait(tr.commit());
+                    /* Void _uvar = */ wait(populateCustomers(self, cx, w_id, d_id));
+                    /* Void _uvar = */ wait(populateOrders(self, cx, w_id, d_id));
+                    /* Void _uvar = */ wait(populateNewOrders(self, cx, w_id, d_id));
                     break;
                 } catch (Error& e) {
                     TraceEvent("PopulateDistrictHandleError").error(e);
-                    Void _uvar = wait(tr.onError(e));
+                    /* Void _uvar = */ wait(tr.onError(e));
                 }
             }
         }
@@ -466,13 +466,13 @@ struct PopulateTPCC : TestWorkload
                     tr.set(s.key(), w.toStringRef(), false);
                 }
                 try {
-                    Void _uvar = wait(tr.commit());
+                    /* Void _uvar = */ wait(tr.commit());
                     break;
                 } catch (Error& e) {
                     TraceEvent("PopulateStockHandleError")
                         .error(e)
                         .detail("Warehouse", w_id);
-                    Void _uvar = wait(tr.onError(e));
+                    /* Void _uvar = */ wait(tr.onError(e));
                 }
             }
         }
@@ -501,17 +501,17 @@ struct PopulateTPCC : TestWorkload
                 BinaryWriter writer(IncludeVersion());
                 serializer(writer, v1(w));
                 tr.set(w.key(), writer.toStringRef(), false);
-                Void _uvar = wait(tr.commit());
+                /* Void _uvar = */ wait(tr.commit());
                 break;
             } catch (Error& e) {
                 TraceEvent("PopulateWarehouseHandleError")
                     .error(e)
                     .detail("Warehouse", w_id);
-                Void _uvar = wait(tr.onError(e));
+                /* Void _uvar = */ wait(tr.onError(e));
             }
         }
-        Void _uvar = wait(populateStock(self, cx, w_id));
-        Void _uvar = wait(populateDistricts(self, cx, w_id));
+        /* Void _uvar = */ wait(populateStock(self, cx, w_id));
+        /* Void _uvar = */ wait(populateDistricts(self, cx, w_id));
         TraceEvent("PopulateWarehouseDone").detail("W_ID", w_id);
         return Void();
     }
@@ -525,7 +525,7 @@ struct PopulateTPCC : TestWorkload
         state int endWID = startWID + self->warehousesPerActor;
         state int wid;
         for (wid = startWID; wid < endWID; ++wid) {
-            Void _uvar = wait(populateWarehouse(self, cx, wid));
+            /* Void _uvar = */ wait(populateWarehouse(self, cx, wid));
         }
         return Void();
     }
@@ -533,12 +533,12 @@ struct PopulateTPCC : TestWorkload
     ACTOR static Future<Void> populate(PopulateTPCC* self, Database cx)
     {
         if (self->clientId == 0) {
-            Void _uvar = wait(writeGlobalState(self, cx));
+            /* Void _uvar = */ wait(writeGlobalState(self, cx));
         } else {
-            Void _uvar = wait(readGlobalState(self, cx));
+            /* Void _uvar = */ wait(readGlobalState(self, cx));
         }
         if (self->clientId == 0) {
-            Void _uvar = wait(populateItems(self, cx));
+            /* Void _uvar = */ wait(populateItems(self, cx));
         }
 
         state vector<Future<Void>> populateActors;
@@ -546,8 +546,8 @@ struct PopulateTPCC : TestWorkload
         for (actorId = 0; actorId < self->actorsPerClient; ++actorId) {
             populateActors.push_back(populateActor(self, cx, actorId));
         }
-        Void _uvar = wait(waitForAll(populateActors));
-        Void _uvar = wait(quietDatabase(cx, self->dbInfo, "PopulateTPCC"));
+        /* Void _uvar = */ wait(waitForAll(populateActors));
+        /* Void _uvar = */ wait(quietDatabase(cx, self->dbInfo, "PopulateTPCC"));
         return Void();
     }
 
